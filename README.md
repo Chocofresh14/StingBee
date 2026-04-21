@@ -4,7 +4,7 @@
 #### Structure du projet
 
 ```
-edr-project/
+StingBee/
 ├── src/
 │   ├── static_memory/
 │   │   ├── yara_engine.cpp             # Scanning YARA (fichiers + mémoire)
