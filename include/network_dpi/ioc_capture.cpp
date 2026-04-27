@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <fstream>
 #include <sstream>
+#include <nlohmann/json.hpp>
 
 std::string intput_donne(std::string input)
 {
@@ -37,55 +38,83 @@ int request_choise(std::string input, std::string x)
 {
     std::string API = "ee81daeaa483270ad43feebca18fd19223c88f659706961a2d026432a755fbd5";
     if (x == "URL"){
-        system(("curl -s -X POST 'https://www.virustotal.com/api/v3/urls' -H 'x-apikey: " + API + "' --data-urlencode 'url=" + input + "' | grep -oE 'https://[A-Za-z0-9./_-]+' | tail -1 | tr -d '\n' > url_url_result.txt").c_str());
-        
+        system(("curl -s -X POST 'https://www.virustotal.com/api/v3/urls' -H 'x-apikey: " + API + "' --data-urlencode 'url=" + input + "' | grep -oE 'https://[A-Za-z0-9./_-]+' | tail -1 | tr -d '\n' > url_url_result.json").c_str());
+
         std::stringstream url;
-        url << std::ifstream("url_url_result.txt").rdbuf();
+        url << std::ifstream("url_url_result.json").rdbuf();
         std::string analysis_url = url.str();
-        
-        system(("curl -s -X GET '" + analysis_url + "' -H 'x-apikey: " + API + "' > url_result.txt").c_str());
-        std::cout << std::ifstream("url_result.txt").rdbuf();
+
+        system(("curl -s -X GET '" + analysis_url + "' -H 'x-apikey: " + API + "' > result.json").c_str());
+        std::cout << std::ifstream("result.json").rdbuf();
         return 0;
     }
     if (x == "DOMAIN"){
-        system(("curl 'https://www.virustotal.com/api/v3/domains/" + input + "' -H 'x-apikey: " + API + "' > domain_result.txt").c_str());
-        std::cout << std::ifstream("domain_result.txt").rdbuf();
+        system(("curl -s -X GET 'https://www.virustotal.com/api/v3/domains/" + input + "' -H 'x-apikey: " + API + "' > result.json").c_str());
+        std::cout << std::ifstream("result.json").rdbuf();
         return 0;
     }
     if (x == "IP"){
-        system(("curl 'https://www.virustotal.com/api/v3/ip_addresses/" + input + "' -H 'x-apikey: " + API + "' > ip_result.txt").c_str());
-        std::cout << std::ifstream("ip_result.txt").rdbuf();
+        system(("curl -s -X GET 'https://www.virustotal.com/api/v3/ip_addresses/" + input + "' -H 'x-apikey: " + API + "' > result.json").c_str());
+        std::cout << std::ifstream("result.json").rdbuf();
         return 0;
     }
     if (x == "HASH"){
-        system(("curl -s -X GET 'https://www.virustotal.com/api/v3/files/" + input + "' -H 'x-apikey: " + API + "' > hash_result.txt").c_str());
-        std::cout << std::ifstream("hash_result.txt").rdbuf();
+        system(("curl -X GET 'https://www.virustotal.com/api/v3/files/" + input + "' -H 'x-apikey: " + API + "' > result.json").c_str());
+
+        std::ifstream f("result.json");
+        std::cout << f.rdbuf();
+        f.close();
+        
         return 0;
     }
     if (x == "Fichier"){
-        system(("curl -s -X POST 'https://www.virustotal.com/api/v3/files' -H 'x-apikey: " + API + "' -F 'file=@" + input + "' | grep -o 'https://[^\"]*' | tr -d '\n' > fichier_url_result.txt").c_str());
-        std::cout << std::ifstream("fichier_url_result.txt").rdbuf();
+        system(("curl -s -X POST 'https://www.virustotal.com/api/v3/files' -H 'x-apikey: " + API + "' -F 'file=@" + input + "' | grep -o 'https://[^\"]*' | tr -d '\n' > fichier_url_result.json").c_str());
+        std::cout << std::ifstream("fichier_url_result.json").rdbuf();
 
         std::stringstream url;
-        url << std::ifstream("fichier_url_result.txt").rdbuf();
+        url << std::ifstream("fichier_url_result.json").rdbuf();
         std::string analysis_url = url.str();
 
-        system(("curl -s -X GET '" + analysis_url + "' -H 'x-apikey: " + API + "' > fichier_result.txt").c_str());
-        std::cout << std::ifstream("fichier_result.txt").rdbuf();
+        system(("curl -s -X GET '" + analysis_url + "' -H 'x-apikey: " + API + "' > result.json").c_str());
+        std::cout << std::ifstream("result.json").rdbuf();
         return 0;
     }
     if (x == "G-Fichier"){
-        system(("curl -s -X GET 'https://www.virustotal.com/api/v3/files/upload_url' -H 'x-apikey: " + API + "' | grep -o 'https://[^\"]*' > GFichier_URL_Result.txt").c_str());
+        system(("curl -s -X GET 'https://www.virustotal.com/api/v3/files/upload_url' -H 'x-apikey: " + API + "' | grep -o 'https://[^\"]*' > GFichier_URL_Result.json").c_str());
 
         std::stringstream convert;
-        convert << std::ifstream("GFichier_URL_Result.txt").rdbuf();
+        convert << std::ifstream("GFichier_URL_Result.json").rdbuf();
         std::string upload_url = convert.str();
 
-        system(("curl -s -X PUT '" + upload_url + "' -H 'x-apikey: " + API + "' -F 'file=@" + input + "' > GFichier_result.txt").c_str());
-        std::cout << std::ifstream("GFichier_result.txt").rdbuf();
+        system(("curl -s -X PUT '" + upload_url + "' -H 'x-apikey: " + API + "' -F 'file=@" + input + "' > result.json").c_str());
+        std::cout << std::ifstream("result.json").rdbuf();
         return 0;
     }
     std::cout << "Le input n'a pas ete identifie" << std::endl;
+    return 0;
+}
+
+int detector_status(std::string type){
+    using json = nlohmann::json;
+    std::ifstream file("result.json");
+    json data = json::parse(file);
+    file.close();
+
+    int score_malicouis = 0;
+    int score_suspicious = 0;
+    int score_failure = 0;
+
+    if(type == "URL" || type == "Fichier" || type == "G-Fichier"){
+        score_malicouis  = data["data"]["attributes"]["stats"]["malicious"];
+        score_suspicious = data["data"]["attributes"]["stats"]["suspicious"];
+        score_failure    = data["data"]["attributes"]["stats"]["failure"];
+    }
+    else{
+        score_malicouis  = data["data"]["attributes"]["last_analysis_stats"]["malicious"];
+        score_suspicious = data["data"]["attributes"]["last_analysis_stats"]["suspicious"];
+        score_failure    = data["data"]["attributes"]["last_analysis_stats"]["failure"];
+    }
+    std::cout << "\nLes scores sont : " << score_malicouis << " " << score_suspicious << " " << score_failure << std::endl;
     return 0;
 }
 
@@ -95,6 +124,7 @@ int main(int argc, char** argv)
     for (int i = 1; i < argc; ++i){
         std::cout << argv[i] << " " << intput_donne(argv[i]) << "\n";
         request_choise(argv[i], intput_donne(argv[i]));
+        detector_status(intput_donne(argv[i]));
     }
     return 0;
 }
