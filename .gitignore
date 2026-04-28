@@ -68,3 +68,9 @@ config/api_keys.env
 # build
 build/
 bin/
+
+# Exercices
+Practice
+
+# Clang
+build-clang
