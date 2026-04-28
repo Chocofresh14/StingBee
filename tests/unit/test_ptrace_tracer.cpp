@@ -195,7 +195,7 @@ bool test_multithread_capture() {
     return true;
 }
 
-}  // namespace
+}
 
 int main() {
     const bool ok_a = test_single_thread_capture();

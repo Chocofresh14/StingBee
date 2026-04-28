@@ -47,4 +47,4 @@ private:
     std::atomic<bool> stop_requested_{false};
 };
 
-}  // namespace stingbee::behavioral
+}

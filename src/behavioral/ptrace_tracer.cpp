@@ -93,7 +93,7 @@ struct ThreadState {
     SyscallEvent enter_event{};
 };
 
-}  // namespace
+}
 
 struct PtraceTracer::Impl {
     pid_t target_pid = 0;
@@ -425,4 +425,4 @@ void PtraceTracer::request_stop() {
     stop_requested_.store(true);
 }
 
-}  // namespace stingbee::behavioral
+}

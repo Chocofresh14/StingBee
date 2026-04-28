@@ -50,3 +50,31 @@ if(BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif()
+
+# eBPF
+find_program(CLANG_BIN clang)
+if(CLANG_BIN)
+    file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/ebpf)
+    set(BPF_SRC ${CMAKE_SOURCE_DIR}/ebpf/syscall_hook.bpf.c)
+    set(BPF_OUT ${CMAKE_BINARY_DIR}/ebpf/syscall_hook.bpf.o)
+
+    add_custom_command(OUTPUT ${BPF_OUT}
+        COMMAND ${CLANG_BIN} -O2 -target bpf -c ${BPF_SRC} -o ${BPF_OUT}
+        DEPENDS ${BPF_SRC}
+        COMMENT "Compiling BPF program ${BPF_SRC} -> ${BPF_OUT}"
+        VERBATIM
+    )
+    add_custom_target(compile_bpf ALL DEPENDS ${BPF_OUT})
+    add_dependencies(stingbee compile_bpf)
+endif()
+
+# Detect libbpf headers and link if present
+include(CheckIncludeFileCXX)
+check_include_file_cxx("bpf/libbpf.h" HAVE_LIBBPF_H)
+if(HAVE_LIBBPF_H)
+    add_compile_definitions(HAVE_LIBBPF=1)
+    find_library(LIBBPF_LIBRARY NAMES bpf libbpf)
+    if(LIBBPF_LIBRARY)
+        target_link_libraries(stingbee PRIVATE ${LIBBPF_LIBRARY})
+    endif()
+endif()
