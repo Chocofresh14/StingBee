@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 project(stingbee VERSION 1.0.0 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -76,5 +75,15 @@ if(HAVE_LIBBPF_H)
     find_library(LIBBPF_LIBRARY NAMES bpf libbpf)
     if(LIBBPF_LIBRARY)
         target_link_libraries(stingbee PRIVATE ${LIBBPF_LIBRARY})
+    endif()
+endif()
+
+# Detect libaudit headers and link if present
+check_include_file_cxx("libaudit.h" HAVE_LIBAUDIT_H)
+if(HAVE_LIBAUDIT_H)
+    add_compile_definitions(HAVE_LIBAUDIT=1)
+    find_library(LIBAUDIT_LIBRARY NAMES audit)
+    if(LIBAUDIT_LIBRARY)
+        target_link_libraries(stingbee PRIVATE ${LIBAUDIT_LIBRARY})
     endif()
 endif()
