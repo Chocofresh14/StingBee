@@ -78,6 +78,13 @@ if(HAVE_LIBBPF_H)
     endif()
 endif()
 
+# Detect libseccomp and link if present
+find_library(LIBSECCOMP_LIBRARY NAMES seccomp)
+if(LIBSECCOMP_LIBRARY)
+    add_compile_definitions(STINGBEE_HAVE_SECCOMP=1)
+    target_link_libraries(stingbee PRIVATE ${LIBSECCOMP_LIBRARY})
+endif()
+
 # Detect libaudit headers and link if present
 check_include_file_cxx("libaudit.h" HAVE_LIBAUDIT_H)
 if(HAVE_LIBAUDIT_H)

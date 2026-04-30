@@ -54,3 +54,29 @@ target_compile_options(stingbee_auditd_event_analyzer_unit PRIVATE
 target_link_libraries(stingbee_auditd_event_analyzer_unit PRIVATE pthread audit)
 
 add_test(NAME auditd_event_analyzer_unit COMMAND stingbee_auditd_event_analyzer_unit)
+
+find_library(LIBSECCOMP_LIBRARY NAMES seccomp)
+
+add_executable(stingbee_seccomp_filter_unit
+    unit/test_seccomp_filter.cpp
+    ../src/behavioral/seccomp_filter.cpp
+)
+
+target_include_directories(stingbee_seccomp_filter_unit PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+target_compile_options(stingbee_seccomp_filter_unit PRIVATE
+    -Wall
+    -Wextra
+    -Wpedantic
+)
+
+if(LIBSECCOMP_LIBRARY)
+    target_compile_definitions(stingbee_seccomp_filter_unit PRIVATE STINGBEE_HAVE_SECCOMP=1)
+    target_link_libraries(stingbee_seccomp_filter_unit PRIVATE pthread ${LIBSECCOMP_LIBRARY})
+else()
+    target_link_libraries(stingbee_seccomp_filter_unit PRIVATE pthread)
+endif()
+
+add_test(NAME seccomp_filter_unit COMMAND stingbee_seccomp_filter_unit)
