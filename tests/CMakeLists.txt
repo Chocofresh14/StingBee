@@ -55,6 +55,25 @@ target_link_libraries(stingbee_auditd_event_analyzer_unit PRIVATE pthread audit)
 
 add_test(NAME auditd_event_analyzer_unit COMMAND stingbee_auditd_event_analyzer_unit)
 
+add_executable(stingbee_syscall_analyzer_unit
+    unit/test_syscall_analyzer.cpp
+    ../src/behavioral/syscall_analyzer.cpp
+)
+
+target_include_directories(stingbee_syscall_analyzer_unit PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+target_compile_options(stingbee_syscall_analyzer_unit PRIVATE
+    -Wall
+    -Wextra
+    -Wpedantic
+)
+
+target_link_libraries(stingbee_syscall_analyzer_unit PRIVATE pthread)
+
+add_test(NAME syscall_analyzer_unit COMMAND stingbee_syscall_analyzer_unit)
+
 find_library(LIBSECCOMP_LIBRARY NAMES seccomp)
 
 add_executable(stingbee_seccomp_filter_unit
