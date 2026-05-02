@@ -32,12 +32,12 @@ bool AuditdEventAnalyzer::start() {
 
 void AuditdEventAnalyzer::stop() {
     running_.store(false);
-    if (listener_thread_ && listener_thread_->joinable()) {
-        listener_thread_->join();
-    }
     if (audit_fd_ >= 0) {
         audit_close(audit_fd_);
         audit_fd_ = -1;
+    }
+    if (listener_thread_ && listener_thread_->joinable()) {
+        listener_thread_->join();
     }
     logger_.info("auditd_analyzer: stopped");
 }

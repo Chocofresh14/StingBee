@@ -76,6 +76,32 @@ add_test(NAME syscall_analyzer_unit COMMAND stingbee_syscall_analyzer_unit)
 
 find_library(LIBSECCOMP_LIBRARY NAMES seccomp)
 
+add_executable(stingbee_main_behavioral
+    main_behavioral.cpp
+    ../src/behavioral/ptrace_tracer.cpp
+    ../src/behavioral/ebpf_loader.cpp
+    ../src/behavioral/auditd_event_analyzer.cpp
+    ../src/behavioral/seccomp_filter.cpp
+    ../src/behavioral/syscall_analyzer.cpp
+)
+
+target_include_directories(stingbee_main_behavioral PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+target_compile_options(stingbee_main_behavioral PRIVATE
+    -Wall
+    -Wextra
+    -Wpedantic
+)
+
+target_link_libraries(stingbee_main_behavioral PRIVATE pthread audit)
+
+if(LIBSECCOMP_LIBRARY)
+    target_compile_definitions(stingbee_main_behavioral PRIVATE STINGBEE_HAVE_SECCOMP=1)
+    target_link_libraries(stingbee_main_behavioral PRIVATE ${LIBSECCOMP_LIBRARY})
+endif()
+
 add_executable(stingbee_seccomp_filter_unit
     unit/test_seccomp_filter.cpp
     ../src/behavioral/seccomp_filter.cpp

@@ -105,15 +105,6 @@ struct PtraceTracer::Impl {
     std::unordered_map<pid_t, ThreadState> thread_states;
 
     bool setup_signal_handler() {
-        struct sigaction action {};
-        action.sa_handler = on_termination_signal;
-        ::sigemptyset(&action.sa_mask);
-        action.sa_flags = SA_RESTART;
-
-        if (::sigaction(SIGTERM, &action, nullptr) != 0) {
-            logger->error("ptrace_tracer: failed to install SIGTERM handler");
-            return false;
-        }
         return true;
     }
 
