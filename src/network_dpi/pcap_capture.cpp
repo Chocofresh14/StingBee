@@ -1,8 +1,9 @@
 #include <iostream>
 #include <pcap.h>
 #include <netinet/ip.h>
-
+std::string dernier_paquet = "";
 void traitement(u_char *user, const struct pcap_pkthdr *header, const u_char *packet) {
+
   int ttl = packet[24];
   int protocol = packet[25];
 
@@ -15,25 +16,13 @@ void traitement(u_char *user, const struct pcap_pkthdr *header, const u_char *pa
   std::cout << "--- IP Header (Méthode Index) --- | Taille : " << total_len << std::endl;
   std::cout << "TTL: " << ttl << " | Protocole: " << protocol << std::endl;
   std::cout << "Source: " << src_ip << " -> Dest: " << dst_ip << std::endl;
+
+  dernier_paquet = src_ip + "->" + dst_ip;
+
 }
 
 int ecoute_dev() {
-  char errbuf[PCAP_ERRBUF_SIZE];
-  pcap_t *handle = pcap_open_live("any", BUFSIZ, 0, -1, errbuf);
 
-  if (handle == NULL) {
-    std::cout << "Handel est Null : " <<  errbuf;
-    return 1;
-  }
-
-  printf("Ecoute en cours...\n");
-  pcap_loop(handle, -1, traitement, NULL);   // -1 = boucle infinie
-
-  pcap_close(handle);
-  return 0;
-}
-
-int main(int argc, char *argv[]) {
   pcap_if_t *dev;
   char errbuf[PCAP_ERRBUF_SIZE];
   int result =0;
@@ -52,7 +41,18 @@ int main(int argc, char *argv[]) {
     }
     dev = dev->next;
   }
-  ecoute_dev();
+
+  pcap_t *handle = pcap_open_live("any", BUFSIZ, 0, -1, errbuf);
+
+  if (handle == NULL) {
+    std::cout << "Handel est Null : " <<  errbuf;
+    return 1;
+  }
+
+  printf("Ecoute en cours...\n");
+  pcap_loop(handle, 1, traitement, NULL);   // -1 = boucle infinie
+
+  pcap_close(handle);
   return 0;
 }
 
