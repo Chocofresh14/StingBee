@@ -1,7 +1,11 @@
 #include <iostream>
 #include <pcap.h>
 #include <netinet/ip.h>
-std::string dernier_paquet = "";
+#include <vector>
+#include <string>
+#include "pcap_capture.h"
+
+std::vector<std::string> paquets;
 void traitement(u_char *user, const struct pcap_pkthdr *header, const u_char *packet) {
 
   int ttl = packet[24];
@@ -12,13 +16,15 @@ void traitement(u_char *user, const struct pcap_pkthdr *header, const u_char *pa
   std::string src_ip = std::to_string(packet[28]) + "." + std::to_string(packet[29]) + "." +std::to_string(packet[30]) + "." +std::to_string(packet[31]);
 
   std::string dst_ip = std::to_string(packet[32]) + "." +std::to_string(packet[33]) + "." + std::to_string(packet[34]) + "." + std::to_string(packet[35]);
-
-  std::cout << "--- IP Header (Méthode Index) --- | Taille : " << total_len << std::endl;
-  std::cout << "TTL: " << ttl << " | Protocole: " << protocol << std::endl;
-  std::cout << "Source: " << src_ip << " -> Dest: " << dst_ip << std::endl;
-
-  dernier_paquet = src_ip + "->" + dst_ip;
-
+  if (paquets.size() >= 3 && paquets[3] == "127.0.0.1") {
+    std::cout << "Le paquet ne sera pas envoyé" << std::endl;
+    return;
+  }
+  paquets.push_back(std::to_string(total_len));
+  paquets.push_back(std::to_string(protocol));
+  paquets.push_back(std::to_string(ttl));
+  paquets.push_back(src_ip);
+  paquets.push_back(dst_ip);
 }
 
 int ecoute_dev() {
@@ -50,8 +56,7 @@ int ecoute_dev() {
   }
 
   printf("Ecoute en cours...\n");
-  pcap_loop(handle, 1, traitement, NULL);   // -1 = boucle infinie
-
+  pcap_loop(handle, 200, traitement, NULL);
   pcap_close(handle);
   return 0;
 }
