@@ -3,6 +3,16 @@
 #include "pcap_capture.h"
 #include <unistd.h>
 #include "ioc_capture.h"
+#include <sys/time.h>
+#include <chrono>
+#include <ctime>
+
+std::string timeToString(std::chrono::system_clock::time_point &t) {
+  std::time_t time = std::chrono::system_clock::to_time_t(t);
+  std::string time_str = std::ctime(&time);
+  time_str.resize(time_str.size() - 1);
+  return time_str;
+}
 
 void inspecter(std::vector<std::string> p) {
 
@@ -35,9 +45,10 @@ void inspecter(std::vector<std::string> p) {
 
 int execute() {
   while (true) {
-    std::cout << "Dormir maintenant" << std::endl;
+    auto time_p = std::chrono::system_clock::now();
+    std::cout << "Dormir maintenant" << timeToString(time_p) << std::endl;
     sleep(3);
-    std::cout << "Reveille" << std::endl;
+    std::cout << "Reveille" << timeToString(time_p) << std::endl;
     paquets.clear();
     ecoute_dev();
     if (!paquets.empty()) {
