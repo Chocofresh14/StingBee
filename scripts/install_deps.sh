@@ -20,8 +20,7 @@ if echo "$ID $ID_LIKE" | grep -qiE "debian|ubuntu"; then
         linux-tools-common \
         nlohmann-json3-dev \
         libcap-dev \
-        qtbase5-dev 
-
+        qtbase5-dev
 
 elif echo "$ID $ID_LIKE" | grep -qiE "rhel|centos|fedora"; then
     echo "Red Hat based"
@@ -34,9 +33,9 @@ elif echo "$ID $ID_LIKE" | grep -qiE "rhel|centos|fedora"; then
         elfutils-libelf-devel \
         pkgconf-pkg-config \
         bpftool \
-        nlohmann-json3-dev \
-        libcap-dev \
-        qtbase5-dev 
+        nlohmann-json-devel \
+        libcap-devel \
+        qtbase5-dev
 
 else
     echo "OS non reconnu : $ID"
