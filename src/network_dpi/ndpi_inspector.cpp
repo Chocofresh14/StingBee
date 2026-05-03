@@ -1,10 +1,8 @@
 #include <iostream>
-#include <pcap.h>
-#include <netinet/ip.h>
 #include <vector>
 #include "pcap_capture.h"
 #include <unistd.h>
-#include "ioc_checker.h"
+#include "ioc_capture.h"
 
 void inspecter(std::vector<std::string> p) {
 
@@ -30,12 +28,12 @@ void inspecter(std::vector<std::string> p) {
 
   if (p[4] == "127.0.0.1" && p[3] != "127.0.0.1") {
     std::cout << "[ALERTE] Trafic externe vers loopback : " << p[3] << " -> 127.0.0.1" << std::endl;
-    std::cout << "VirusTotal analyse" << std::endl;
+    std::cout << "VirusTotal analyse " << std::endl;
     collecte(p[3]);
     }
   }
 
-int main() {
+int execute() {
   while (true) {
     std::cout << "Dormir maintenant" << std::endl;
     sleep(3);

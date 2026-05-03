@@ -18,7 +18,9 @@ file(GLOB_RECURSE SOURCES
 add_executable(stingbee ${SOURCES}
         src/network_dpi/ndpi_inspector.cpp
         src/network_dpi/pcap_capture.h
-        src/network_dpi/ioc_checker.h)
+        src/network_dpi/ioc_capture.h
+        src/network_dpi/ndpi_inspector.h
+)
 
 # Tous les Headers de qui sont dans include
 target_include_directories(stingbee PRIVATE

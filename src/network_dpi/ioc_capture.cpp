@@ -64,7 +64,7 @@ int request_choise(std::string input, std::string x)
         std::ifstream f("result.json");
         std::cout << f.rdbuf();
         f.close();
-        
+
         return 0;
     }
     if (x == "Fichier"){
@@ -104,16 +104,16 @@ int detector_status(std::string type){
     int score_suspicious = 0;
     int score_failure = 0;
 
-  if(type == "URL" || type == "Fichier" || type == "G-Fichier"){
+    if(type == "URL" || type == "Fichier" || type == "G-Fichier"){
     score_malicouis  = data["data"]["attributes"]["stats"].value("malicious", 0);
     score_suspicious = data["data"]["attributes"]["stats"].value("suspicious", 0);
     score_failure    = data["data"]["attributes"]["stats"].value("failure", 0);
-  }
-  else{
+}
+else{
     score_malicouis  = data["data"]["attributes"]["last_analysis_stats"].value("malicious", 0);
     score_suspicious = data["data"]["attributes"]["last_analysis_stats"].value("suspicious", 0);
     score_failure    = data["data"]["attributes"]["last_analysis_stats"].value("failure", 0);
-  }
+}
     std::cout << "\nLes scores sont : " << score_malicouis << " " << score_suspicious << " " << score_failure << std::endl;
     return 0;
 }
