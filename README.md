@@ -1,7 +1,76 @@
 # StingBee
 
+# Build
 
-#### Structure du projet
+Pour compiler le projet, depuis la racine du dépôt :
+
+```bash
+mkdir -p build
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
+```
+
+Le binaire est ensuite disponible dans `build/stingbee`.
+
+---
+
+### Lancer les tests
+
+On passe simplement `-DBUILD_TESTS=ON` au moment de la configuration, ce qui inclut automatiquement le dossier `tests/` dans la compilation :
+
+```bash
+mkdir -p build
+cmake -S . -B build -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --build build -j
+ctest --test-dir build --output-on-failure
+```
+
+Si un test échoue, `--output-on-failure` affiche directement le message d'erreur sans avoir à relancer quoi que ce soit.
+
+---
+
+### Utiliser clang à la place de gcc
+
+Par défaut CMake choisit le compilateur disponible sur le système. Pour forcer clang, deux options :
+
+Via les variables d'environnement :
+
+```bash
+export CC=clang
+export CXX=clang++
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
+```
+
+Ou directement dans la commande cmake :
+
+```bash
+cmake -S . -B build \
+    -DCMAKE_C_COMPILER=/usr/bin/clang \
+    -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
+    -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
+```
+
+Pour vérifier quel compilateur CMake a retenu :
+
+```bash
+cmake -S . -B build -LA -N | grep CMAKE_CXX_COMPILER
+```
+
+Si clang n'est pas encore installé :
+
+```bash
+sudo apt update && sudo apt install clang
+```
+
+---
+
+### Dépendances optionnelles
+
+CMake détecte automatiquement les bibliothèques présentes sur le système et les lie si elles sont disponibles : `libpcap`, `libyara`, `yaml-cpp`, `libaudit`, `libseccomp`. Il n'y a rien à faire manuellement si elles sont installées.
+
+# Structure du projet
 
 ```
 StingBee/

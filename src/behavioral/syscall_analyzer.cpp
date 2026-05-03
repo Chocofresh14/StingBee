@@ -7,6 +7,31 @@
 namespace stingbee::behavioral {
 
 static bool is_write_syscall(int syscall_nr) {
+    #if defined(__x86_64__)
+    static const int write_syscalls[] = {
+        2    // open
+        257  // openat
+        85   // creat
+        82   // rename
+        264  // renameat
+        87   // unlink
+        263  // unlinkat
+        83   // mkdir
+        258  // mkdirat
+        84   // rmdir
+        86   // link
+        88   // symlink
+        90   // chmod
+        91   // fchmod
+        92   // chown
+        93   // fchown
+        76   // truncate
+        77   // ftruncate
+        1    // write
+        18   // pwrite64
+    };
+    #endif
+    #if defined(__aarch64__)
     static const int write_syscalls[] = {
         56,  // open/openat
         55,  // creat
@@ -23,6 +48,7 @@ static bool is_write_syscall(int syscall_nr) {
         64,  // write
         68   // pwrite64
     };
+    #endif
     for (int sc : write_syscalls) {
         if (sc == syscall_nr) return true;
     }
@@ -30,23 +56,48 @@ static bool is_write_syscall(int syscall_nr) {
 }
 
 static bool is_exec_syscall(int syscall_nr) {
+    #if defined(__aarch64__)
     return syscall_nr == 221;  // execve
+    #endif
+    #if defined(__x86_64__)
+    return syscall_nr == 59;
+    #endif
 }
 
 static bool is_ptrace_syscall(int syscall_nr) {
+    #if defined(__aarch64__)
     return syscall_nr == 117;  // ptrace
+    #endif
+    #if defined(__x86_64__)
+    return syscall_nr == 101;
+    #endif
 }
 
 static bool is_mmap_syscall(int syscall_nr) {
+    #if defined(__aarch64__)
     return syscall_nr == 222;  // mmap
+    #endif
+    #if defined(__x86_64__)
+    return syscall_nr == 9;
+    #endif
 }
 
 static bool is_prctl_syscall(int syscall_nr) {
+    #if defined(__aarch64__)
     return syscall_nr == 167;  // prctl
+    #endif
+    #if defined(__x86_64__)
+    return syscall_nr == 157;
+    #endif
 }
 
 static bool is_fork_syscall(int syscall_nr) {
+    #if defined(__aarch64__)
     return syscall_nr == 220 || syscall_nr == 435;  // clone, clone3
+    #endif
+    #if defined(__x86_64__)
+    return syscall_nr == 56 || syscall_nr == 435;
+    #endif
 }
 
 SyscallAnalyzer::SyscallAnalyzer(IEventBus& bus, ILogger& logger)
@@ -104,18 +155,26 @@ void SyscallAnalyzer::load_rules_from_config(const std::string& config_path) {
 
 std::string SyscallAnalyzer::get_syscall_name(int nr) {
     switch (nr) {
-        case 56: return "openat";
+        case 56: return "openat"; // amd and arm
         case 63: return "read";
         case 64: return "write";
         case 57: return "close";
         case 221: return "execve";
         case 220: return "clone";
-        case 435: return "clone3";
+        case 435: return "clone3"; // amd and arm
         case 117: return "ptrace";
         case 222: return "mmap";
         case 167: return "prctl";
-        case 90: return "chmod";
-        case 92: return "chown";
+        case 90: return "chmod"; // amd and arm
+        case 92: return "chown"; // amd and arm
+        case 257: return "openat";
+        case 0:   return "read";
+        case 1:   return "write";
+        case 3:   return "close";
+        case 59:  return "execve";
+        case 101: return "ptrace";
+        case 9:   return "mmap";
+        case 157: return "prctl";
         default: return "syscall_" + std::to_string(nr);
     }
 }

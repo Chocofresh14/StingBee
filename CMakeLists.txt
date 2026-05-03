@@ -39,18 +39,32 @@ target_link_options(stingbee PRIVATE
     $<$<CONFIG:Debug>:-fsanitize=address>
 )
 
-# Dépendances à modifier si utilisé ou non
-
-# libpcap
-# libyara
-# yaml-cpp
-
 # Build les tests
 option(BUILD_TESTS "Compiler les tests" ON)
 
 if(BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
+endif()
+
+check_include_file_cxx("pcap/pcap.h" HAVE_PCAP_H)
+if(HAVE_PCAP_H)
+    add_compile_definitions(HAVE_PCAP=1)
+endif()
+
+find_library(PCAP_LIBRARY NAMES pcap)
+if(PCAP_LIBRARY)
+    target_link_libraries(stingbee PRIVATE ${PCAP_LIBRARY})
+endif()
+
+find_library(LIBYARA_LIBRARY NAMES yara)
+if(LIBYARA_LIBRARY)
+    target_link_libraries(stingbee PRIVATE ${LIBYARA_LIBRARY})
+endif()
+
+find_library(YAMLCPP_LIBRARY NAMES yaml-cpp yamlcpp)
+if(YAMLCPP_LIBRARY)
+    target_link_libraries(stingbee PRIVATE ${YAMLCPP_LIBRARY})
 endif()
 
 # eBPF

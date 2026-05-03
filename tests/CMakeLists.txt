@@ -15,6 +15,20 @@ target_compile_options(stingbee_ptrace_tracer_unit PRIVATE
 
 target_link_libraries(stingbee_ptrace_tracer_unit PRIVATE pthread)
 
+find_library(PCAP_LIBRARY NAMES pcap)
+find_library(LIBYARA_LIBRARY NAMES yara)
+find_library(YAMLCPP_LIBRARY NAMES yaml-cpp yamlcpp)
+
+if(PCAP_LIBRARY)
+    target_link_libraries(stingbee_ptrace_tracer_unit PRIVATE ${PCAP_LIBRARY})
+endif()
+if(LIBYARA_LIBRARY)
+    target_link_libraries(stingbee_ptrace_tracer_unit PRIVATE ${LIBYARA_LIBRARY})
+endif()
+if(YAMLCPP_LIBRARY)
+    target_link_libraries(stingbee_ptrace_tracer_unit PRIVATE ${YAMLCPP_LIBRARY})
+endif()
+
 add_test(NAME ptrace_tracer_unit COMMAND stingbee_ptrace_tracer_unit)
 
 add_executable(stingbee_ebpf_loader_unit
@@ -33,6 +47,16 @@ target_compile_options(stingbee_ebpf_loader_unit PRIVATE
 )
 
 target_link_libraries(stingbee_ebpf_loader_unit PRIVATE pthread)
+
+if(PCAP_LIBRARY)
+    target_link_libraries(stingbee_ebpf_loader_unit PRIVATE ${PCAP_LIBRARY})
+endif()
+if(LIBYARA_LIBRARY)
+    target_link_libraries(stingbee_ebpf_loader_unit PRIVATE ${LIBYARA_LIBRARY})
+endif()
+if(YAMLCPP_LIBRARY)
+    target_link_libraries(stingbee_ebpf_loader_unit PRIVATE ${YAMLCPP_LIBRARY})
+endif()
 
 add_test(NAME ebpf_loader_unit COMMAND stingbee_ebpf_loader_unit)
 
@@ -53,6 +77,16 @@ target_compile_options(stingbee_auditd_event_analyzer_unit PRIVATE
 
 target_link_libraries(stingbee_auditd_event_analyzer_unit PRIVATE pthread audit)
 
+if(PCAP_LIBRARY)
+    target_link_libraries(stingbee_auditd_event_analyzer_unit PRIVATE ${PCAP_LIBRARY})
+endif()
+if(LIBYARA_LIBRARY)
+    target_link_libraries(stingbee_auditd_event_analyzer_unit PRIVATE ${LIBYARA_LIBRARY})
+endif()
+if(YAMLCPP_LIBRARY)
+    target_link_libraries(stingbee_auditd_event_analyzer_unit PRIVATE ${YAMLCPP_LIBRARY})
+endif()
+
 add_test(NAME auditd_event_analyzer_unit COMMAND stingbee_auditd_event_analyzer_unit)
 
 add_executable(stingbee_syscall_analyzer_unit
@@ -71,6 +105,16 @@ target_compile_options(stingbee_syscall_analyzer_unit PRIVATE
 )
 
 target_link_libraries(stingbee_syscall_analyzer_unit PRIVATE pthread)
+
+if(PCAP_LIBRARY)
+    target_link_libraries(stingbee_syscall_analyzer_unit PRIVATE ${PCAP_LIBRARY})
+endif()
+if(LIBYARA_LIBRARY)
+    target_link_libraries(stingbee_syscall_analyzer_unit PRIVATE ${LIBYARA_LIBRARY})
+endif()
+if(YAMLCPP_LIBRARY)
+    target_link_libraries(stingbee_syscall_analyzer_unit PRIVATE ${YAMLCPP_LIBRARY})
+endif()
 
 add_test(NAME syscall_analyzer_unit COMMAND stingbee_syscall_analyzer_unit)
 
@@ -97,6 +141,16 @@ target_compile_options(stingbee_main_behavioral PRIVATE
 
 target_link_libraries(stingbee_main_behavioral PRIVATE pthread audit)
 
+if(PCAP_LIBRARY)
+    target_link_libraries(stingbee_main_behavioral PRIVATE ${PCAP_LIBRARY})
+endif()
+if(LIBYARA_LIBRARY)
+    target_link_libraries(stingbee_main_behavioral PRIVATE ${LIBYARA_LIBRARY})
+endif()
+if(YAMLCPP_LIBRARY)
+    target_link_libraries(stingbee_main_behavioral PRIVATE ${YAMLCPP_LIBRARY})
+endif()
+
 if(LIBSECCOMP_LIBRARY)
     target_compile_definitions(stingbee_main_behavioral PRIVATE STINGBEE_HAVE_SECCOMP=1)
     target_link_libraries(stingbee_main_behavioral PRIVATE ${LIBSECCOMP_LIBRARY})
@@ -120,6 +174,15 @@ target_compile_options(stingbee_seccomp_filter_unit PRIVATE
 if(LIBSECCOMP_LIBRARY)
     target_compile_definitions(stingbee_seccomp_filter_unit PRIVATE STINGBEE_HAVE_SECCOMP=1)
     target_link_libraries(stingbee_seccomp_filter_unit PRIVATE pthread ${LIBSECCOMP_LIBRARY})
+    if(PCAP_LIBRARY)
+        target_link_libraries(stingbee_seccomp_filter_unit PRIVATE ${PCAP_LIBRARY})
+    endif()
+    if(LIBYARA_LIBRARY)
+        target_link_libraries(stingbee_seccomp_filter_unit PRIVATE ${LIBYARA_LIBRARY})
+    endif()
+    if(YAMLCPP_LIBRARY)
+        target_link_libraries(stingbee_seccomp_filter_unit PRIVATE ${YAMLCPP_LIBRARY})
+    endif()
 else()
     target_link_libraries(stingbee_seccomp_filter_unit PRIVATE pthread)
 endif()
