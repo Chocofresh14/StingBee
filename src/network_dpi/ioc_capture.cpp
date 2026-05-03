@@ -104,27 +104,24 @@ int detector_status(std::string type){
     int score_suspicious = 0;
     int score_failure = 0;
 
-    if(type == "URL" || type == "Fichier" || type == "G-Fichier"){
-        score_malicouis  = data["data"]["attributes"]["stats"]["malicious"];
-        score_suspicious = data["data"]["attributes"]["stats"]["suspicious"];
-        score_failure    = data["data"]["attributes"]["stats"]["failure"];
-    }
-    else{
-        score_malicouis  = data["data"]["attributes"]["last_analysis_stats"]["malicious"];
-        score_suspicious = data["data"]["attributes"]["last_analysis_stats"]["suspicious"];
-        score_failure    = data["data"]["attributes"]["last_analysis_stats"]["failure"];
-    }
+  if(type == "URL" || type == "Fichier" || type == "G-Fichier"){
+    score_malicouis  = data["data"]["attributes"]["stats"].value("malicious", 0);
+    score_suspicious = data["data"]["attributes"]["stats"].value("suspicious", 0);
+    score_failure    = data["data"]["attributes"]["stats"].value("failure", 0);
+  }
+  else{
+    score_malicouis  = data["data"]["attributes"]["last_analysis_stats"].value("malicious", 0);
+    score_suspicious = data["data"]["attributes"]["last_analysis_stats"].value("suspicious", 0);
+    score_failure    = data["data"]["attributes"]["last_analysis_stats"].value("failure", 0);
+  }
     std::cout << "\nLes scores sont : " << score_malicouis << " " << score_suspicious << " " << score_failure << std::endl;
     return 0;
 }
 
-int main(int argc, char** argv)
+int collecte(std::string input)
 {
-    std::cout << "Have " << argc-1 << " arguments:\n";
-    for (int i = 1; i < argc; ++i){
-        std::cout << argv[i] << " " << intput_donne(argv[i]) << "\n";
-        request_choise(argv[i], intput_donne(argv[i]));
-        detector_status(intput_donne(argv[i]));
-    }
-    return 0;
+  std::cout << input << " " << intput_donne(input) << "\n";
+  request_choise(input, intput_donne(input));
+  detector_status(intput_donne(input));
+  return 0;
 }

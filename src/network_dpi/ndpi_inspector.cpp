@@ -4,29 +4,41 @@
 #include <vector>
 #include "pcap_capture.h"
 #include <unistd.h>
+#include "ioc_checker.h"
 
 void inspecter(std::vector<std::string> p) {
 
-  if (std::stoi(p[1]) <= 10 && p[3] != "127.0.0.1")
+  if (std::stoi(p[1]) <= 10 && p[3] != "127.0.0.1") {
     std::cout << "[ALERTE] TTL très bas (" << p[1] << ") : " << p[3] << " -> possible scan" << std::endl;
+    std::cout << "VirusTotal analyse ..." << std::endl;
+    collecte(p[3]);
+  }
 
-  if (std::stoi(p[0]) > 1500)
+  if (std::stoi(p[0]) > 1500) {
     std::cout << "[ALERTE] Paquet trop grand (" << p[0] << " octets) : " << p[3] << std::endl;
+    std::cout << "VirusTotal analyse" << std::endl;
+    collecte(p[3]);
+  }
 
-  if (std::stoi(p[2]) == 1)
-    std::cout << "[INFO] ICMP détecté : " << p[3] << " -> " << p[4] << std::endl;
+  if (std::stoi(p[2]) == 1) {
+  std::cout << "[INFO] ICMP détecté : " << p[3] << " -> " << p[4] << std::endl;
+  }
 
-  if (std::stoi(p[2]) == 17)
+  if (std::stoi(p[2]) == 17) {
     std::cout << "[INFO] UDP détecté : " << p[3] << " -> " << p[4] << std::endl;
+  }
 
-  if (p[4] == "127.0.0.1" && p[3] != "127.0.0.1")
+  if (p[4] == "127.0.0.1" && p[3] != "127.0.0.1") {
     std::cout << "[ALERTE] Trafic externe vers loopback : " << p[3] << " -> 127.0.0.1" << std::endl;
-}
+    std::cout << "VirusTotal analyse" << std::endl;
+    collecte(p[3]);
+    }
+  }
 
 int main() {
   while (true) {
     std::cout << "Dormir maintenant" << std::endl;
-    sleep(30);
+    sleep(3);
     std::cout << "Reveille" << std::endl;
     paquets.clear();
     ecoute_dev();

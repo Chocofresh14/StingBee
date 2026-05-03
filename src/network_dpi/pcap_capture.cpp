@@ -5,7 +5,10 @@
 #include <string>
 #include "pcap_capture.h"
 
+
 std::vector<std::string> paquets;
+int nombre_paquet = 0;
+
 void traitement(u_char *user, const struct pcap_pkthdr *header, const u_char *packet) {
 
   int ttl = packet[24];
@@ -14,17 +17,19 @@ void traitement(u_char *user, const struct pcap_pkthdr *header, const u_char *pa
   int total_len = (packet[18] << 8) + packet[19];
 
   std::string src_ip = std::to_string(packet[28]) + "." + std::to_string(packet[29]) + "." +std::to_string(packet[30]) + "." +std::to_string(packet[31]);
-
   std::string dst_ip = std::to_string(packet[32]) + "." +std::to_string(packet[33]) + "." + std::to_string(packet[34]) + "." + std::to_string(packet[35]);
-  if (paquets.size() >= 3 && paquets[3] == "127.0.0.1") {
+
+  if (src_ip.rfind("127.", 0) == 0 || dst_ip.rfind("127.", 0) == 0) {
     std::cout << "Le paquet ne sera pas envoyé" << std::endl;
     return;
   }
+
   paquets.push_back(std::to_string(total_len));
   paquets.push_back(std::to_string(protocol));
   paquets.push_back(std::to_string(ttl));
   paquets.push_back(src_ip);
   paquets.push_back(dst_ip);
+  nombre_paquet ++;
 }
 
 int ecoute_dev() {
@@ -55,9 +60,14 @@ int ecoute_dev() {
     return 1;
   }
 
-  printf("Ecoute en cours...\n");
-  pcap_loop(handle, 200, traitement, NULL);
-  pcap_close(handle);
-  return 0;
+  while (nombre_paquet < 200) {
+    paquets.clear();
+    std::cout << "Ecoute en cours..." << std::endl;
+    pcap_loop(handle, 200, traitement, NULL);
+  }
+    pcap_close(handle);
+    nombre_paquet = 0;
+    return 0;
+
 }
 
