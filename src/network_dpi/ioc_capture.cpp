@@ -38,56 +38,56 @@ int request_choise(std::string input, std::string x)
 {
     std::string API = "ee81daeaa483270ad43feebca18fd19223c88f659706961a2d026432a755fbd5";
     if (x == "URL"){
-        system(("curl -s -X POST 'https://www.virustotal.com/api/v3/urls' -H 'x-apikey: " + API + "' --data-urlencode 'url=" + input + "' | grep -oE 'https://[A-Za-z0-9./_-]+' | tail -1 | tr -d '\n' > url_url_result.json").c_str());
+        system(("curl -s -X POST 'https://www.virustotal.com/api/v3/urls' -H 'x-apikey: " + API + "' --data-urlencode 'url=" + input + "' | grep -oE 'https://[A-Za-z0-9./_-]+' | tail -1 | tr -d '\n' > /var/log/url_url_result.json").c_str());
 
         std::stringstream url;
-        url << std::ifstream("url_url_result.json").rdbuf();
+        url << std::ifstream("/var/log/url_url_result.json").rdbuf();
         std::string analysis_url = url.str();
 
-        system(("curl -s -X GET '" + analysis_url + "' -H 'x-apikey: " + API + "' > result.json").c_str());
-        std::cout << std::ifstream("result.json").rdbuf();
+        system(("curl -s -X GET '" + analysis_url + "' -H 'x-apikey: " + API + "' > /var/log/result.json").c_str());
+        std::cout << std::ifstream("/var/log/result.json").rdbuf();
         return 0;
     }
     if (x == "DOMAIN"){
-        system(("curl -s -X GET 'https://www.virustotal.com/api/v3/domains/" + input + "' -H 'x-apikey: " + API + "' > result.json").c_str());
-        std::cout << std::ifstream("result.json").rdbuf();
+        system(("curl -s -X GET 'https://www.virustotal.com/api/v3/domains/" + input + "' -H 'x-apikey: " + API + "' > /var/log/result.json").c_str());
+        std::cout << std::ifstream("/var/log/result.json").rdbuf();
         return 0;
     }
     if (x == "IP"){
-        system(("curl -s -X GET 'https://www.virustotal.com/api/v3/ip_addresses/" + input + "' -H 'x-apikey: " + API + "' > result.json").c_str());
-        std::cout << std::ifstream("result.json").rdbuf();
+        system(("curl -s -X GET 'https://www.virustotal.com/api/v3/ip_addresses/" + input + "' -H 'x-apikey: " + API + "' > /var/log/result.json").c_str());
+        std::cout << std::ifstream("/var/log/result.json").rdbuf();
         return 0;
     }
     if (x == "HASH"){
-        system(("curl -X GET 'https://www.virustotal.com/api/v3/files/" + input + "' -H 'x-apikey: " + API + "' > result.json").c_str());
+        system(("curl -X GET 'https://www.virustotal.com/api/v3/files/" + input + "' -H 'x-apikey: " + API + "' > /var/log/result.json").c_str());
 
-        std::ifstream f("result.json");
+        std::ifstream f("/var/log/result.json");
         std::cout << f.rdbuf();
         f.close();
 
         return 0;
     }
     if (x == "Fichier"){
-        system(("curl -s -X POST 'https://www.virustotal.com/api/v3/files' -H 'x-apikey: " + API + "' -F 'file=@" + input + "' | grep -o 'https://[^\"]*' | tr -d '\n' > fichier_url_result.json").c_str());
-        std::cout << std::ifstream("fichier_url_result.json").rdbuf();
+        system(("curl -s -X POST 'https://www.virustotal.com/api/v3/files' -H 'x-apikey: " + API + "' -F 'file=@" + input + "' | grep -o 'https://[^\"]*' | tr -d '\n' > /var/log/fichier_url_result.json").c_str());
+        std::cout << std::ifstream("/var/log/fichier_url_result.json").rdbuf();
 
         std::stringstream url;
-        url << std::ifstream("fichier_url_result.json").rdbuf();
+        url << std::ifstream("/var/log/fichier_url_result.json").rdbuf();
         std::string analysis_url = url.str();
 
-        system(("curl -s -X GET '" + analysis_url + "' -H 'x-apikey: " + API + "' > result.json").c_str());
-        std::cout << std::ifstream("result.json").rdbuf();
+        system(("curl -s -X GET '" + analysis_url + "' -H 'x-apikey: " + API + "' > /var/log/result.json").c_str());
+        std::cout << std::ifstream("/var/log/result.json").rdbuf();
         return 0;
     }
     if (x == "G-Fichier"){
-        system(("curl -s -X GET 'https://www.virustotal.com/api/v3/files/upload_url' -H 'x-apikey: " + API + "' | grep -o 'https://[^\"]*' > GFichier_URL_Result.json").c_str());
+        system(("curl -s -X GET 'https://www.virustotal.com/api/v3/files/upload_url' -H 'x-apikey: " + API + "' | grep -o 'https://[^\"]*' > /var/log/GFichier_URL_Result.json").c_str());
 
         std::stringstream convert;
-        convert << std::ifstream("GFichier_URL_Result.json").rdbuf();
+        convert << std::ifstream("/var/log/GFichier_URL_Result.json").rdbuf();
         std::string upload_url = convert.str();
 
-        system(("curl -s -X PUT '" + upload_url + "' -H 'x-apikey: " + API + "' -F 'file=@" + input + "' > result.json").c_str());
-        std::cout << std::ifstream("result.json").rdbuf();
+        system(("curl -s -X PUT '" + upload_url + "' -H 'x-apikey: " + API + "' -F 'file=@" + input + "' > /var/log/result.json").c_str());
+        std::cout << std::ifstream("/var/log/result.json").rdbuf();
         return 0;
     }
     std::cout << "Le input n'a pas ete identifie" << std::endl;

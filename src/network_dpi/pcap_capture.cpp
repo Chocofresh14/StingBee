@@ -4,10 +4,23 @@
 #include <vector>
 #include <string>
 #include "pcap_capture.h"
+#include <sys/time.h>
+#include <chrono>
+#include <ctime>
+#include <fstream>
 
+auto time_p = std::chrono::system_clock::now();
+std::ofstream edr_logs("/var/log/stingbee/edr.log", std::ios::app);
 
 std::vector<std::string> paquets;
 int nombre_paquet = 0;
+
+std::string timeToStringg(std::chrono::system_clock::time_point &t) {
+  std::time_t time = std::chrono::system_clock::to_time_t(t);
+  std::string time_str = std::ctime(&time);
+  time_str.resize(time_str.size() - 1);
+  return time_str;
+}
 
 void traitement(u_char *user, const struct pcap_pkthdr *header, const u_char *packet) {
 
@@ -20,7 +33,6 @@ void traitement(u_char *user, const struct pcap_pkthdr *header, const u_char *pa
   std::string dst_ip = std::to_string(packet[32]) + "." +std::to_string(packet[33]) + "." + std::to_string(packet[34]) + "." + std::to_string(packet[35]);
 
   if (src_ip.rfind("127.", 0) == 0 || dst_ip.rfind("127.", 0) == 0) {
-    std::cout << "Le paquet ne sera pas envoyé" << std::endl;
     return;
   }
 
@@ -40,7 +52,7 @@ int ecoute_dev() {
 
   result = pcap_findalldevs(&dev, errbuf);
   if (result == -1) {
-    std::cout << "Error in pcap_findalldevs: " << errbuf << std::endl;
+    edr_logs << "Error in pcap_findalldevs: " << errbuf << std::endl;
     return 0;
   }
   while (dev != NULL) {
@@ -48,7 +60,7 @@ int ecoute_dev() {
     bool is_running = (dev->flags & PCAP_IF_RUNNING);
 
     if (is_up && is_running) {
-      std::cout << "Interface active : " << dev->name << std::endl;
+      edr_logs << "Interface active : " << dev->name << timeToStringg(time_p) << std::endl;
     }
     dev = dev->next;
   }
@@ -56,13 +68,12 @@ int ecoute_dev() {
   pcap_t *handle = pcap_open_live("any", BUFSIZ, 0, -1, errbuf);
 
   if (handle == NULL) {
-    std::cout << "Handel est Null : " <<  errbuf;
+    edr_logs << "Handel est Null : " << timeToStringg(time_p) <<  errbuf;
     return 1;
   }
 
   while (nombre_paquet < 200) {
     paquets.clear();
-    std::cout << "Ecoute en cours..." << std::endl;
     pcap_loop(handle, 200, traitement, NULL);
   }
     pcap_close(handle);
