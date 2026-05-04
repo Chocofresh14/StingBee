@@ -19,7 +19,8 @@ if echo "$ID $ID_LIKE" | grep -qiE "debian|ubuntu"; then
         pkg-config \
         nlohmann-json3-dev \
         libaudit-dev \
-        libpcap-dev
+        libpcap-dev \
+        qtbase5-dev
 
 elif echo "$ID $ID_LIKE" | grep -qiE "rhel|centos|fedora"; then
     echo "Red Hat based"

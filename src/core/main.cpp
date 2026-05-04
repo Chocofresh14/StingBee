@@ -8,7 +8,7 @@
 #include <thread>
 #include "../network_dpi/ndpi_inspector.h"
 #include "../static_memory/main.hpp"
-#include "include/main.hpp"
+#include "behavioral/main.hpp"
 
 int main(int argc, char *argv[]){
 

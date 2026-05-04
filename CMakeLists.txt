@@ -16,11 +16,11 @@ file(GLOB_RECURSE SOURCES
     src/static_memory/*.cpp
 )
 
+list(FILTER SOURCES EXCLUDE REGEX ".*/test\\.cpp$")
+list(FILTER SOURCES EXCLUDE REGEX ".*/test_.*\\.cpp$")
+
 # Binaire créer a la sortie
-add_executable(stingbee ${SOURCES}
-        src/network_dpi/ndpi_inspector.cpp
-        src/network_dpi/pcap_capture.h
-        src/network_dpi/ioc_checker.h)
+add_executable(stingbee ${SOURCES})
 
 # Tous les Headers de qui sont dans include
 target_include_directories(stingbee PRIVATE
@@ -112,3 +112,6 @@ if(HAVE_LIBAUDIT_H)
         target_link_libraries(stingbee PRIVATE ${LIBAUDIT_LIBRARY})
     endif()
 endif()
+
+find_package(Qt5 REQUIRED COMPONENTS Widgets)
+target_link_libraries(stingbee PRIVATE Qt5::Widgets)

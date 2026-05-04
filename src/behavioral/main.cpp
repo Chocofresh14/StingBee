@@ -1,4 +1,4 @@
-#include "main.hpp"
+#include "behavioral/main.hpp"
 #include "behavioral/syscall_analyzer.hpp"
 #include "behavioral/seccomp_filter.hpp"
 #include "behavioral/auditd_event_analyzer.hpp"
