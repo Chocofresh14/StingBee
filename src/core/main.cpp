@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <thread>
 #include "../network_dpi/ndpi_inspector.h"
+#include "../static_memory/main.hpp"
 
 int main(int argc, char *argv[]){
 
@@ -17,6 +18,10 @@ int main(int argc, char *argv[]){
 
   std::thread ndpi(execute);
   ndpi.detach();
+  std::thread yara_th([](){
+    yara("../static_memory/hello.bin");
+  });
+  yara_th.detach();
 
   QApplication app(argc, argv);
   QWidget window;
