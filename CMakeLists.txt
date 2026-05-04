@@ -4,6 +4,8 @@ project(stingbee VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+include(CheckIncludeFileCXX)
+
 
 # Les fichiers cibles
 file(GLOB_RECURSE SOURCES
@@ -18,14 +20,11 @@ file(GLOB_RECURSE SOURCES
 add_executable(stingbee ${SOURCES}
         src/network_dpi/ndpi_inspector.cpp
         src/network_dpi/pcap_capture.h
-        src/network_dpi/ioc_capture.h
-        src/network_dpi/ndpi_inspector.h
-)
+        src/network_dpi/ioc_checker.h)
 
 # Tous les Headers de qui sont dans include
 target_include_directories(stingbee PRIVATE
     ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}
 )
 
 # Options
@@ -88,7 +87,6 @@ if(CLANG_BIN)
 endif()
 
 # Detect libbpf headers and link if present
-include(CheckIncludeFileCXX)
 check_include_file_cxx("bpf/libbpf.h" HAVE_LIBBPF_H)
 if(HAVE_LIBBPF_H)
     add_compile_definitions(HAVE_LIBBPF=1)
@@ -113,3 +111,4 @@ if(HAVE_LIBAUDIT_H)
     if(LIBAUDIT_LIBRARY)
         target_link_libraries(stingbee PRIVATE ${LIBAUDIT_LIBRARY})
     endif()
+endif()
