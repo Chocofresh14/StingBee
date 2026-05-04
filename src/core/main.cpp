@@ -8,6 +8,7 @@
 #include <thread>
 #include "../network_dpi/ndpi_inspector.h"
 #include "../static_memory/main.hpp"
+#include "include/main.hpp"
 
 int main(int argc, char *argv[]){
 
@@ -22,6 +23,9 @@ int main(int argc, char *argv[]){
     yara("../static_memory/hello.bin");
   });
   yara_th.detach();
+
+  std::thread behavioral_thread([](){ run_behavioral_components(); });
+  behavioral_thread.detach();
 
   QApplication app(argc, argv);
   QWidget window;
